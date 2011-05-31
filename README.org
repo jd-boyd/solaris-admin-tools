@@ -14,5 +14,12 @@
   things.  
 
   Also, please make suggestions.
+* Requirements
+  Python2.4 that comes with Solaris 10.  It should work with newer,
+  including what comes with Solaris 11.  I don't want you to have to use
+  anything further than what is installed to use this. 
+
+  You may need a suffuciently new version of Solaris 10 though, or else
+  to modify the scripts.  I believe you need build 105 or newer.
 * Todo
 
