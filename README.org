@@ -1,4 +1,18 @@
 * About
+  Scripts to help me administer Solaris 10.
 
+  This scripts are a bit bias'd towards how I do things, and you may
+  need to modify them accordingly.
+
+  For instance, I use virtual NICs with crossbow for networking my
+  zones.
+
+  Also, I map my home directory into each zone.  
+
+  Search for and alter the variables in the config section near the
+  front, and the contents of the zone_tmplt_str variable to change these
+  things.  
+
+  Also, please make suggestions.
 * Todo
-  Add arg parsing to zone_cfg.py
+

@@ -1,12 +1,15 @@
 #!/usr/bin/env python
 from subprocess import Popen, PIPE
 import os
+import sys
 import string
 import optparse
+from optparse import OptionParser
 
 # Config Section
 prefix_ip='192.168.10'
 etherstub='etherstub0'
+zone_storage_prefix='/export/zones'
 
 # functions
 def get_vnic():
@@ -38,14 +41,63 @@ def get_next_ip ():
     return prefix_ip + "." + str(next_suffix)
 
 # Do the work
-name="david_zone"
 
-vnic = get_vnic()
-ip = get_next_ip()
+parser = OptionParser()
+# ip option
+# vnic option
+# name is a required argument
 
-#cat <<EOF > zones/$name.config
+parser.add_option("-n", "--nic", dest="vnic",
+                  help="Defaults to using NIC", metavar="NIC")
+
+parser.add_option("-c", "--create-vnic", dest="make_vnic",
+                  action="store_true",
+                  help="Create the specified vnic ", default=False)
+
+parser.add_option("-i", "--ip", dest="ip", help="Use IP for the zone.  Default is to find the next PREFIX address to use.")
+
+(options, args) = parser.parse_args()
+
+print options
+
+if len(args) == 0:
+    print "NAME argument is required."
+    sys.exit(-1)
+
+if len(args) != 1:
+    print "Too many arguments. We can only use one NAME."
+    sys.exit(-1)
+
+
+name=args[0]
+print "Will use name:", name
+
+if options.ip:
+    # BUG: Add code to verify the supplied IP.
+    ip = options.ip
+else:
+    ip = get_next_ip()
+
+print "Will use IP:", ip
+
+if options.vnic:
+    vnic = options.vnic
+    if options.make_vnic:
+        make_nic = True
+    else:
+        make_nic = False
+else:
+    vnic = get_vnic()
+    make_nic = True
+
+print "Will user nic:", vnic
+if make_nic:
+    print "Will create new vnic."
+else:
+    print "Will NOT create new vnic."
+
 zone_tmplt_str = """create
-set zonepath=/export/zones/$name
+set zonepath=$zone_storage_prefix/$name
 set autoboot=true
 set ip-type=exclusive
 add net
@@ -67,13 +119,15 @@ zone_tmplt = string.Template(zone_tmplt_str)
 output_file_str = "zones/%s.config" % (name,)
 
 fh = open(output_file_str, "w")
-fh.write(zone_tmplt.substitute(name=name, vnic=vnic, ip=ip))
+fh.write(zone_tmplt.substitute(name=name, vnic=vnic, ip=ip, 
+                               zone_storage_prefix=zone_storage_prefix))
 fh.close()
 
 print ip, name
 # | tee /etc/hosts
 print "Now do the following:"
-print "dladm create-vnic -l etherstub0 %s" % (vnic, )
+if make_nic:
+    print "dladm create-vnic -l etherstub0 %s" % (vnic, )
 print "zonecfg -z %s -f %s" % (name, output_file_str)
 print "zoneadm -z %s install" % (name,)
 print "zoneadm -z %s boot" % (name,)
