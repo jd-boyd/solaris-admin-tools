@@ -22,4 +22,9 @@
   You may need a suffuciently new version of Solaris 10 though, or else
   to modify the scripts.  I believe you need build 105 or newer.
 * Todo
-
+** Generate and install a site.xml file.
+   installs to zone_storage_path/ZONE_NAME/root/var/svc/profile
+   
+   Probably should copy from a freshly installed zone, immediately after
+   my zone_service_cleanup script was run.  Then, with the site.xml, the
+   cleanup script wouldn't be needed.
