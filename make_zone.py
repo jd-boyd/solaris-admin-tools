@@ -126,8 +126,10 @@ timezone=US/Central
 """
 
 zone_tmplt = string.Template(zone_tmplt_str)
+sysidcfg_tmplt = string.Template(sysidcfg_tmplt_str)
 
 output_file_str = "zones/%s.config" % (name,)
+sysid_output_file_str = "zones/%s_sysidcfg" % (name,)
 
 fh = open(output_file_str, "w")
 fh.write(zone_tmplt.substitute(name=name, vnic=vnic, ip=ip, 
@@ -139,7 +141,7 @@ print ip, name
 print "Now do the following:"
 if make_nic:
     print "dladm create-vnic -l etherstub0 %s" % (vnic, )
-print "cp %s_sysidcfg %s/%s/root/etc/sysidcfg" % (name, zone_storage_prefix, name)
 print "zonecfg -z %s -f %s" % (name, output_file_str)
 print "zoneadm -z %s install" % (name,)
+print "cp %s %s/%s/root/etc/sysidcfg" % (sysid_output_file_str, zone_storage_prefix, name)
 print "zoneadm -z %s boot" % (name,)
