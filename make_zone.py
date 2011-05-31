@@ -11,7 +11,13 @@ prefix_ip='192.168.10'
 etherstub='etherstub0'
 zone_storage_prefix='/export/zones'
 
-# functions
+# This is an encrypted password grabbed from /etc/shadow
+# The default supplied here is: new_zone
+root_password='e1PgaQ4EGpRro'
+
+timezone = "US/Eastern"
+
+# Functions
 def get_vnic():
     # dladm show-vnic 
     # awk ' { print $1 } ' 
@@ -119,29 +125,33 @@ terminal=vt100
 name_service=none
 network_interface=$vnic {primary hostname=$name ip_address=$ip netmask=255.255.255.0 protocol_ipv6=no default_route=NONE}
 nfs4_domain=dynamic
-root_password=cmuL.HSJtwJ.I
+root_password=$root_password
 security_policy=none
 timeserver=localhost
-timezone=US/Central
+timezone=$timezone
 """
 
 zone_tmplt = string.Template(zone_tmplt_str)
 sysidcfg_tmplt = string.Template(sysidcfg_tmplt_str)
 
 output_file_str = "zones/%s.config" % (name,)
-sysid_output_file_str = "zones/%s_sysidcfg" % (name,)
+sysidcfg_output_file_str = "zones/%s_sysidcfg" % (name,)
 
 fh = open(output_file_str, "w")
 fh.write(zone_tmplt.substitute(name=name, vnic=vnic, ip=ip, 
                                zone_storage_prefix=zone_storage_prefix))
 fh.close()
 
-print ip, name
-# | tee /etc/hosts
+fh = open(sysidcfg_output_file_str, "w")
+fh.write(sysidcfg_tmplt.substitute(name=name, vnic=vnic, ip=ip, 
+                                   root_password=root_password, timezone=timezone))
+fh.close()
+
 print "Now do the following:"
+print "echo", ip, name, "| tee /etc/hosts"
 if make_nic:
     print "dladm create-vnic -l etherstub0 %s" % (vnic, )
 print "zonecfg -z %s -f %s" % (name, output_file_str)
 print "zoneadm -z %s install" % (name,)
-print "cp %s %s/%s/root/etc/sysidcfg" % (sysid_output_file_str, zone_storage_prefix, name)
+print "cp %s %s/%s/root/etc/sysidcfg" % (sysidcfg_output_file_str, zone_storage_prefix, name)
 print "zoneadm -z %s boot" % (name,)
