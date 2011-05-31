@@ -114,6 +114,17 @@ verify
 commit
 """
 
+sysidcfg_tmplt_str = """system_locale=C
+terminal=vt100
+name_service=none
+network_interface=$vnic {primary hostname=$name ip_address=$ip netmask=255.255.255.0 protocol_ipv6=no default_route=NONE}
+nfs4_domain=dynamic
+root_password=cmuL.HSJtwJ.I
+security_policy=none
+timeserver=localhost
+timezone=US/Central
+"""
+
 zone_tmplt = string.Template(zone_tmplt_str)
 
 output_file_str = "zones/%s.config" % (name,)
