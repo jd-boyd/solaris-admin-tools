@@ -139,6 +139,7 @@ print ip, name
 print "Now do the following:"
 if make_nic:
     print "dladm create-vnic -l etherstub0 %s" % (vnic, )
+print "cp %s_sysidcfg %s/%s/root/etc/sysidcfg" % (name, zone_storage_prefix, name)
 print "zonecfg -z %s -f %s" % (name, output_file_str)
 print "zoneadm -z %s install" % (name,)
 print "zoneadm -z %s boot" % (name,)
