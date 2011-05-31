@@ -42,7 +42,7 @@ def get_next_ip ():
 
 # Do the work
 
-parser = OptionParser()
+parser = OptionParser(usage="usage: %prog [options] ZONE_NAME")
 # ip option
 # vnic option
 # name is a required argument
@@ -54,18 +54,18 @@ parser.add_option("-c", "--create-vnic", dest="make_vnic",
                   action="store_true",
                   help="Create the specified vnic ", default=False)
 
-parser.add_option("-i", "--ip", dest="ip", help="Use IP for the zone.  Default is to find the next PREFIX address to use.")
+parser.add_option("-i", "--ip", dest="ip", help="Use IP for the zone.  Default is to find the next prefix address to use.")
 
 (options, args) = parser.parse_args()
 
 print options
 
 if len(args) == 0:
-    print "NAME argument is required."
+    print "ZONE_NAME argument is required."
     sys.exit(-1)
 
 if len(args) != 1:
-    print "Too many arguments. We can only use one NAME."
+    print "Too many arguments. We can only use one ZONE_NAME."
     sys.exit(-1)
 
 
