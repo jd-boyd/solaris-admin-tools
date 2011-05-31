@@ -148,7 +148,7 @@ fh.write(sysidcfg_tmplt.substitute(name=name, vnic=vnic, ip=ip,
 fh.close()
 
 print "Now do the following:"
-print "echo", ip, name, "| tee /etc/hosts"
+print "echo", ip, name, "| tee -a /etc/hosts"
 if make_nic:
     print "dladm create-vnic -l etherstub0 %s" % (vnic, )
 print "zonecfg -z %s -f %s" % (name, output_file_str)
