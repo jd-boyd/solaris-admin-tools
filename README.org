@@ -21,6 +21,17 @@
 
   You may need a suffuciently new version of Solaris 10 though, or else
   to modify the scripts.  I believe you need build 105 or newer.
+* BUGS
+** /etc/hosts ending with blank lines confuses get_next_ip
+   It will error out.  Need to work backwards to a non blank/non-comment
+   line.
+** Spurious error on first boot w.r.t. sysidcfg
+ network_interface=vnic9 {primary hostname=yourls-zone
+ ip_address=192.168.10.17 netmask=255.255.255.0 protocol_ipv6=no
+ default_route=NONE}
+vnic9 is not a valid network interface  line 4 position 19
+
+However, it sets up vnic9 (or whatever) just fine anyway.
 * Todo
 ** Generate and install a site.xml file.
    installs to zone_storage_path/ZONE_NAME/root/var/svc/profile
@@ -28,3 +39,5 @@
    Probably should copy from a freshly installed zone, immediately after
    my zone_service_cleanup script was run.  Then, with the site.xml, the
    cleanup script wouldn't be needed.
+   
+   See http://www.c0t0d0s0.org/archives/5355-Upcoming-Solaris-Features-Crossbow-Part-1-Virtualisation.html
