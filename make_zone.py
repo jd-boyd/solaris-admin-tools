@@ -108,7 +108,6 @@ set autoboot=true
 set ip-type=exclusive
 add net
 set physical=$vnic
-set address=$ip/24
 end
 add fs
 set dir=/export/home/jdboyd
