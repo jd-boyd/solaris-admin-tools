@@ -135,6 +135,7 @@ sysidcfg_tmplt = string.Template(sysidcfg_tmplt_str)
 
 output_file_str = "zones/%s.config" % (name,)
 sysidcfg_output_file_str = "zones/%s_sysidcfg" % (name,)
+readme_output_file_str = "zones/%s.README" % (name,)
 
 fh = open(output_file_str, "w")
 fh.write(zone_tmplt.substitute(name=name, vnic=vnic, ip=ip, 
@@ -146,11 +147,16 @@ fh.write(sysidcfg_tmplt.substitute(name=name, vnic=vnic, ip=ip,
                                    root_password=root_password, timezone=timezone))
 fh.close()
 
-print "Now do the following:"
-print "echo", ip, name, "| tee -a /etc/hosts"
+fh = open(readme_output_file_str, 'w')
+fh.write("Now do the following:\n")
+fh.write("echo %s %s | sudo tee -a /etc/hosts\n" % (ip, name))
 if make_nic:
-    print "dladm create-vnic -l etherstub0 %s" % (vnic, )
-print "zonecfg -z %s -f %s" % (name, output_file_str)
-print "zoneadm -z %s install" % (name,)
-print "cp %s %s/%s/root/etc/sysidcfg" % (sysidcfg_output_file_str, zone_storage_prefix, name)
-print "zoneadm -z %s boot" % (name,)
+    fh.write("dladm create-vnic -l etherstub0 %s\n" % (vnic, ))
+fh.write("zonecfg -z %s -f %s\n" % (name, output_file_str))
+fh.write("zoneadm -z %s install\n" % (name,))
+fh.write("cp %s %s/%s/root/etc/sysidcfg\n" % (sysidcfg_output_file_str, 
+                                              zone_storage_prefix, name))
+fh.write("zoneadm -z %s boot\n" % (name,))
+fh.close()
+
+print "Please read", readme_output_file_str
